@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f8;
+            text-align: center;
+            margin: 0;
+        }
+
+        h1 {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        input {
+            padding: 10px;
+            width: 200px;
+        }
+
+        button {
+            padding: 10px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: white;
+            margin: 10px auto;
+            padding: 10px;
+            width: 300px;
+            display: flex;
+            justify-content: space-between;
+            border-radius: 5px;
+        }
+
+        .done {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        .delete {
+            background: red;
+            color: white;
+            border: none;
+        }
+
+        .complete {
+            background: green;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Habit Tracker</h1>
+
+<div class="container">
+    <input type="text" id="habitInput" placeholder="Enter habit">
+    <button onclick="addHabit()">Add</button>
+
+    <ul id="habitList"></ul>
+</div>
+
+<script>
+    let habits = JSON.parse(localStorage.getItem("habits")) || [];
+
+    function saveHabits() {
+        localStorage.setItem("habits", JSON.stringify(habits));
+    }
+
+    function renderHabits() {
+        let list = document.getElementById("habitList");
+        list.innerHTML = "";
+
+        habits.forEach((habit, index) => {
+            let li = document.createElement("li");
+
+            let span = document.createElement("span");
+            span.innerText = habit.name;
+
+            if (habit.done) {
+                span.classList.add("done");
+            }
+
+            let completeBtn = document.createElement("button");
+            completeBtn.innerText = "✔";
+            completeBtn.className = "complete";
+            completeBtn.onclick = () => toggleHabit(index);
+
+            let deleteBtn = document.createElement("button");
+            deleteBtn.innerText = "X";
+            deleteBtn.className = "delete";
+            deleteBtn.onclick = () => deleteHabit(index);
+
+            li.appendChild(span);
+            li.appendChild(completeBtn);
+            li.appendChild(deleteBtn);
+
+            list.appendChild(li);
+        });
+    }
+
+    function addHabit() {
+        let input = document.getElementById("habitInput");
+        let value = input.value.trim();
+
+        if (value === "") {
+            alert("Enter a habit!");
+            return;
+        }
+
+        habits.push({ name: value, done: false });
+        input.value = "";
+        saveHabits();
+        renderHabits();
+    }
+
+    function toggleHabit(index) {
+        habits[index].done = !habits[index].done;
+        saveHabits();
+        renderHabits();
+    }
+
+    function deleteHabit(index) {
+        habits.splice(index, 1);
+        saveHabits();
+        renderHabits();
+    }
+
+    renderHabits();
+</script>
+
+</body>
+</html>
